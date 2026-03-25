@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
+import { Skills } from './components/Skills';
 import './styles/theme.css';
 import './styles/globals.css';
 
@@ -20,6 +21,8 @@ const App = () => {
       <main style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', backgroundColor: 'var(--bg-primary)' }}>
         {currentView === 'dashboard' ? (
           <Dashboard onNavigate={setCurrentView} />
+        ) : currentView === 'skills' ? (
+          <Skills />
         ) : (
           <div>
             <h1>Hermes Desktop App</h1>
