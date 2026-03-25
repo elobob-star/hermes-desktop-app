@@ -1,6 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
+// Basic IPC setup
+ipcMain.handle('ping', () => 'pong');
+
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -13,13 +16,10 @@ function createWindow() {
     }
   });
 
-  // Load the index.html from dist/ directory where webpack bundles it
+  // Load the index.html from dist/ directory where Vite bundles it
   mainWindow.loadFile(path.join(__dirname, '../dist/index.html')).catch(err => {
     console.error('Failed to load dist/index.html. Ensure you have run the build script.', err);
   });
-
-  // Basic IPC setup
-  ipcMain.handle('ping', () => 'pong');
 }
 
 app.whenReady().then(() => {

@@ -12,7 +12,7 @@ const MainContent: React.FC = () => {
 
       <section className="content-section">
         <h2>Recent Activity</h2>
-        <div className="placeholder-card" style={{ height: '300px' }}>
+        <div className="placeholder-card placeholder-card--tall">
           Terminal output and session history will appear here.
         </div>
       </section>
