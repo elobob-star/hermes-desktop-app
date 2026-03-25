@@ -1,0 +1,236 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+}
+
+.dashboard-welcome {
+  margin-bottom: 8px;
+}
+
+.dashboard-welcome h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.dashboard-welcome p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+.dashboard-panel {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-panel h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+/* Quick Actions */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.action-card {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.action-card:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.action-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.action-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+}
+
+.action-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Recent Activity */
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+  background-color: var(--bg-tertiary);
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+}
+
+.activity-item:nth-child(even) {
+  background-color: rgba(22, 33, 62, 0.5); /* slightly lighter/darker alternate */
+}
+
+.activity-item:hover {
+  border-left-color: var(--accent-primary);
+}
+
+.activity-time {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  min-width: 60px;
+  padding-top: 2px;
+}
+
+.activity-content {
+  margin-left: 12px;
+}
+
+.activity-type {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.activity-preview {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* System Status */
+.status-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-indicator.connected {
+  background-color: var(--success);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.status-indicator.disconnected {
+  background-color: var(--error);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.status-indicator.stopped {
+  background-color: var(--warning);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.status-text.connected {
+  color: var(--success);
+}
+
+.status-text.disconnected {
+  color: var(--error);
+}
+
+.status-text.stopped {
+  color: var(--warning);
+}
+
+.status-details {
+  background-color: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.status-detail-item {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.status-detail-label {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.status-detail-value {
+  word-break: break-all;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
