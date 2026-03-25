@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Sidebar } from './components/Sidebar';
 import './styles/theme.css';
 import './styles/globals.css';
-import { Header } from './components/Header';
 
 const App = () => {
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', margin: 0, padding: 0, backgroundColor: 'var(--bg-primary)' }}>
-      <Header title="Hermes Desktop App" />
-      <div style={{ padding: '24px', flex: 1, overflowY: 'auto' }}>
-        <p style={{ color: 'var(--text-primary)' }}>Welcome to the production-ready interface.</p>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
+      <Sidebar
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+      />
+      <main style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', backgroundColor: 'var(--bg-primary)' }}>
+        <h1>Hermes Desktop App</h1>
+        <p>Welcome to the production-ready interface.</p>
+        <p>Current View: <strong>{currentView}</strong></p>
         <button
           className="theme-transition"
           style={{
@@ -19,13 +29,14 @@ const App = () => {
             padding: '10px 20px',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            marginTop: '16px'
           }}
-          onClick={() => window.api?.invoke('ping').then(console.log)}
+          onClick={() => window.api?.ping().then(console.log)}
         >
           Ping Main Process
         </button>
-      </div>
+      </main>
     </div>
   );
 };
