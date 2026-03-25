@@ -188,3 +188,60 @@
   border-radius: 12px;
   border: 1px dashed var(--border-color);
 }
+
+/* Notification styles */
+.skill-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.skill-notification.success {
+  background-color: rgba(16, 185, 129, 0.9);
+  color: white;
+}
+
+.skill-notification.error {
+  background-color: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Status bar */
+.skills-status-bar {
+  padding: 10px 16px;
+  background-color: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--accent-primary);
+  border-radius: 8px;
+  color: var(--accent-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.skills-status-bar.warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: #FBBF24;
+  color: #FBBF24;
+}
+
+/* Skill run button disabled state */
+.skill-run-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
