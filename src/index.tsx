@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
+// The main application component
 const App = () => {
   return (
     <div style={{ padding: '24px' }}>
