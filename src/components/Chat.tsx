@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage, Message } from './ChatMessage';
 import './Chat.css';
 
-const WELCOME_MESSAGE: Message = {
-  id: 'welcome-1',
+const INITIAL_MESSAGE: Message = {
+  id: 'init-1',
   role: 'assistant',
-  content: "Hello! I'm Hermes. How can I help you today?",
+  content: 'Hello! I am Hermes. How can I help you today?',
   timestamp: Date.now(),
 };
 
 export const Chat: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
-  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+  const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -23,31 +23,34 @@ export const Chat: React.FC = () => {
   }, [messages]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    const trimmed = inputValue.trim();
+    if (!trimmed) return;
 
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: `msg-${Date.now()}`,
       role: 'user',
-      content: input.trim(),
+      content: trimmed,
       timestamp: Date.now(),
     };
 
     setMessages((prev) => [...prev, newMessage]);
-    setInput('');
+    setInputValue('');
 
-    // Simulate assistant reply for now
+    // Simulate dummy response from assistant after a short delay
     setTimeout(() => {
-      const reply: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: `I received your message: "${newMessage.content}". I'm a placeholder response right now!`,
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, reply]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `msg-${Date.now() + 1}`,
+          role: 'assistant',
+          content: 'I understand. I am currently a simulated assistant, so I cannot perform complex actions just yet.',
+          timestamp: Date.now(),
+        },
+      ]);
     }, 1000);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -67,21 +70,30 @@ export const Chat: React.FC = () => {
         <div className="chat-input-wrapper">
           <textarea
             className="chat-input"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Message Hermes..."
             rows={1}
-            aria-label="Message input"
           />
           <button
-            className="chat-send-btn"
+            className="chat-send-btn theme-transition"
             onClick={handleSend}
-            disabled={!input.trim()}
-            aria-label="Send message"
+            disabled={!inputValue.trim()}
+            title="Send Message"
           >
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2.01 21L23 12L2.01 3L2 10l15 2-15 2z" fill="currentColor"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
           </button>
         </div>

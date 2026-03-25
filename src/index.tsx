@@ -18,13 +18,15 @@ const App = () => {
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
-      <main style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', backgroundColor: 'var(--bg-primary)' }}>
+      <main style={{ flexGrow: 1, padding: 0, overflowY: 'hidden', backgroundColor: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
         {currentView === 'dashboard' ? (
-          <Dashboard onNavigate={setCurrentView} />
+          <div style={{ padding: '24px', overflowY: 'auto', flex: 1 }}>
+            <Dashboard onNavigate={setCurrentView} />
+          </div>
         ) : currentView === 'chat' ? (
           <Chat />
         ) : (
-          <div>
+          <div style={{ padding: '24px', overflowY: 'auto', flex: 1 }}>
             <h1>Hermes Desktop App</h1>
             <p>Welcome to the production-ready interface.</p>
             <p>Current View: <strong>{currentView}</strong></p>

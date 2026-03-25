@@ -1,89 +1,98 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { Chat } from '../Chat';
 
 describe('Chat Component', () => {
-  beforeEach(() => {
-    // Mock scrollIntoView which is not implemented in JSDOM
+  beforeAll(() => {
+    // Mock scrollIntoView
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.useFakeTimers();
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 
-  it('renders initial welcome message and input area', () => {
+  it('renders initial welcome message', () => {
     render(<Chat />);
-
-    // Check for welcome message
-    expect(screen.getByText("Hello! I'm Hermes. How can I help you today?")).toBeInTheDocument();
-
-    // Check for input area
-    expect(screen.getByPlaceholderText('Message Hermes...')).toBeInTheDocument();
-    expect(screen.getByLabelText('Send message')).toBeInTheDocument();
+    expect(screen.getByText('Hello! I am Hermes. How can I help you today?')).toBeInTheDocument();
   });
 
-  it('allows typing and sending a message', async () => {
+  it('allows user to type and send a message', () => {
     render(<Chat />);
 
     const input = screen.getByPlaceholderText('Message Hermes...');
-    const sendButton = screen.getByLabelText('Send message');
-
-    // Button should be disabled initially
-    expect(sendButton).toBeDisabled();
+    const sendButton = screen.getByTitle('Send Message');
 
     // Type a message
-    fireEvent.change(input, { target: { value: 'Test message' } });
+    fireEvent.change(input, { target: { value: 'Test message from user' } });
+    expect(input).toHaveValue('Test message from user');
 
-    // Button should be enabled now
-    expect(sendButton).not.toBeDisabled();
-
-    // Send the message
+    // Send message
     fireEvent.click(sendButton);
 
-    // Message should be displayed and input cleared
-    expect(screen.getByText('Test message')).toBeInTheDocument();
+    // Input should be cleared and message should be in the list
     expect(input).toHaveValue('');
+    expect(screen.getByText('Test message from user')).toBeInTheDocument();
+  });
 
-    // Fast-forward timers for the simulated reply
+  it('disables send button when input is empty', () => {
+    render(<Chat />);
+
+    const sendButton = screen.getByTitle('Send Message');
+    expect(sendButton).toBeDisabled();
+
+    const input = screen.getByPlaceholderText('Message Hermes...');
+    fireEvent.change(input, { target: { value: '   ' } });
+    expect(sendButton).toBeDisabled();
+
+    fireEvent.change(input, { target: { value: 'Valid message' } });
+    expect(sendButton).not.toBeDisabled();
+  });
+
+  it('sends message on Enter key (without shift)', () => {
+    render(<Chat />);
+
+    const input = screen.getByPlaceholderText('Message Hermes...');
+
+    fireEvent.change(input, { target: { value: 'Keyboard test' } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: false });
+
+    expect(screen.getByText('Keyboard test')).toBeInTheDocument();
+    expect(input).toHaveValue('');
+  });
+
+  it('adds a new line on Shift+Enter instead of sending', () => {
+    render(<Chat />);
+
+    const input = screen.getByPlaceholderText('Message Hermes...');
+
+    fireEvent.change(input, { target: { value: 'Line 1\nLine 2' } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: true });
+
+    expect(input).toHaveValue('Line 1\nLine 2');
+    expect(screen.queryByText('Line 1\nLine 2')).not.toBeInTheDocument();
+  });
+
+  it('simulates assistant response after a user message', () => {
+    jest.useFakeTimers();
+    render(<Chat />);
+
+    const input = screen.getByPlaceholderText('Message Hermes...');
+    const sendButton = screen.getByTitle('Send Message');
+
+    fireEvent.change(input, { target: { value: 'Hello Hermes' } });
+    fireEvent.click(sendButton);
+
+    expect(screen.getByText('Hello Hermes')).toBeInTheDocument();
+
+    // Fast-forward the timeout
     act(() => {
       jest.advanceTimersByTime(1000);
     });
 
-    // Simulated reply should appear
-    await waitFor(() => {
-      expect(screen.getByText(/I received your message: "Test message"/)).toBeInTheDocument();
-    });
-  });
+    expect(screen.getByText('I understand. I am currently a simulated assistant, so I cannot perform complex actions just yet.')).toBeInTheDocument();
 
-  it('allows sending a message using the Enter key', () => {
-    render(<Chat />);
-
-    const input = screen.getByPlaceholderText('Message Hermes...');
-
-    // Type a message
-    fireEvent.change(input, { target: { value: 'Test Enter key' } });
-
-    // Press Enter
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
-
-    // Message should be displayed
-    expect(screen.getByText('Test Enter key')).toBeInTheDocument();
-  });
-
-  it('does not send a message when Shift+Enter is pressed', () => {
-    render(<Chat />);
-
-    const input = screen.getByPlaceholderText('Message Hermes...');
-
-    // Type a message
-    fireEvent.change(input, { target: { value: 'Multiline\nText' } });
-
-    // Press Shift+Enter
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: true });
-
-    // Message should not be sent (input not cleared)
-    expect(input).toHaveValue('Multiline\nText');
+    jest.useRealTimers();
   });
 });
