@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Sidebar } from './components/Sidebar';
+import { Dashboard } from './components/Dashboard';
 import './styles/theme.css';
 import './styles/globals.css';
 
@@ -17,25 +18,31 @@ const App = () => {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
       <main style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', backgroundColor: 'var(--bg-primary)' }}>
-        <h1>Hermes Desktop App</h1>
-        <p>Welcome to the production-ready interface.</p>
-        <p>Current View: <strong>{currentView}</strong></p>
-        <button
-          className="theme-transition"
-          style={{
-            backgroundColor: 'var(--accent-primary)',
-            color: 'var(--text-primary)',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            marginTop: '16px'
-          }}
-          onClick={() => window.api?.ping().then(console.log)}
-        >
-          Ping Main Process
-        </button>
+        {currentView === 'dashboard' ? (
+          <Dashboard onNavigate={setCurrentView} />
+        ) : (
+          <div>
+            <h1>Hermes Desktop App</h1>
+            <p>Welcome to the production-ready interface.</p>
+            <p>Current View: <strong>{currentView}</strong></p>
+            <button
+              className="theme-transition"
+              style={{
+                backgroundColor: 'var(--accent-primary)',
+                color: 'var(--text-primary)',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                marginTop: '16px'
+              }}
+              onClick={() => window.api?.ping().then(console.log)}
+            >
+              Ping Main Process
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
