@@ -48,9 +48,9 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// Additional IPC handler for chatting with Hermes
+// IPC handler for chatting with Hermes
 ipcMain.handle('hermes:chat', async (event, message, conversationHistory) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // First check if Hermes is available
     const status = hermesClient.status;
     
@@ -64,18 +64,19 @@ ipcMain.handle('hermes:chat', async (event, message, conversationHistory) => {
       return;
     }
 
-    // Try to execute Hermes chat command
+    // Execute Hermes chat with -q flag for non-interactive mode
     const executable = status.paths.executable;
-    const args = ['chat', '--message', message];
-    
-    // If conversation history exists, we could pass it
-    if (conversationHistory && conversationHistory.length > 0) {
-      args.push('--context', JSON.stringify(conversationHistory.slice(-5))); // Last 5 messages for context
-    }
+    const args = [
+      'chat',
+      '-q', message,     // Query/message
+      '-Q'                // Quiet mode (no banner, no spinner)
+    ];
 
+    console.log(`Executing: ${executable} ${args.join(' ')}`);
+    
     const child = spawn(executable, args, {
       cwd: process.cwd(),
-      env: { ...process.env, NODE_ENV: 'production' }
+      env: { ...process.env, TERM: 'dumb' }
     });
 
     let stdout = '';
@@ -97,11 +98,12 @@ ipcMain.handle('hermes:chat', async (event, message, conversationHistory) => {
           demo: false
         });
       } else {
-        // If Hermes fails, fall back to demo mode
+        // If Hermes fails, provide helpful error
+        const errorMsg = stderr.trim() || stdout.trim() || `Hermes exited with code ${code}`;
         resolve({
           success: false,
-          message: stderr.trim() || `Hermes exited with code ${code}`,
-          demo: true,
+          message: errorMsg,
+          demo: false,
           error: true
         });
       }
@@ -111,21 +113,21 @@ ipcMain.handle('hermes:chat', async (event, message, conversationHistory) => {
       // If Hermes can't be spawned, fall back to demo mode
       resolve({
         success: false,
-        message: `Failed to execute Hermes: ${err.message}. Running in demo mode.`,
+        message: `Failed to execute Hermes: ${err.message}`,
         demo: true,
         error: true
       });
     });
 
-    // Set a timeout for the command
+    // Set a timeout for the command (60 seconds for chat)
     setTimeout(() => {
       child.kill();
       resolve({
         success: false,
-        message: 'Command timed out. Running in demo mode.',
-        demo: true,
+        message: 'Chat request timed out after 60 seconds.',
+        demo: false,
         error: true
       });
-    }, 30000); // 30 second timeout
+    }, 60000);
   });
 });
