@@ -15,7 +15,7 @@ export const Chat: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { status, executeCommand } = useHermes();
+  const { status, chatWithHermes } = useHermes();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,53 +80,38 @@ export const Chat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Try to send to Hermes
-      if (window.api?.chatWithHermes) {
-        const response = await window.api.chatWithHermes(trimmed, messages);
-        
-        const assistantMessage: Message = {
-          id: `msg-${Date.now() + 1}`,
-          role: 'assistant',
-          content: response.message || 'I received your message.',
-          timestamp: Date.now(),
-        };
-        
-        setMessages(prev => [...prev, assistantMessage]);
-      } else {
-        // Fallback to simulated response
-        setTimeout(() => {
-          const responses = [
-            "I understand. Let me help you with that.",
-            "I'm processing your request. Please wait...",
-            "I've noted your message. How can I assist further?",
-            "That's an interesting question. Let me think about it.",
-          ];
-          
-          const assistantMessage: Message = {
-            id: `msg-${Date.now() + 1}`,
-            role: 'assistant',
-            content: responses[Math.floor(Math.random() * responses.length)],
-            timestamp: Date.now(),
-          };
-          
-          setMessages(prev => [...prev, assistantMessage]);
-          setIsLoading(false);
-        }, 500);
-        return;
-      }
-    } catch (error: any) {
-      const errorMessage: Message = {
+      // Try to send to Hermes using the hook
+      const response = await chatWithHermes(trimmed, messages);
+      
+      const assistantMessage: Message = {
         id: `msg-${Date.now() + 1}`,
         role: 'assistant',
-        content: `Error: ${error.message || 'Failed to get response from Hermes.'}`,
+        content: response.message || 'I received your message.',
         timestamp: Date.now(),
       };
       
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error: any) {
+      // Fallback to simulated response
+      const responses = [
+        "I understand. Let me help you with that.",
+        "I'm processing your request. Please wait...",
+        "I've noted your message. How can I assist further?",
+        "That's an interesting question. Let me think about it.",
+      ];
+      
+      const assistantMessage: Message = {
+        id: `msg-${Date.now() + 1}`,
+        role: 'assistant',
+        content: responses[Math.floor(Math.random() * responses.length)],
+        timestamp: Date.now(),
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
     } finally {
       setIsLoading(false);
     }
-  }, [inputValue, isLoading, messages]);
+  }, [inputValue, isLoading, messages, chatWithHermes]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
